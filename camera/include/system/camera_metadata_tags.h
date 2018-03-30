@@ -62,6 +62,7 @@ typedef enum camera_metadata_section {
     ANDROID_REPROCESS,
     ANDROID_DEPTH,
     ANDROID_LOGICAL_MULTI_CAMERA,
+    ANDROID_DISTORTION_CORRECTION,
     ANDROID_SECTION_COUNT,
 
     VENDOR_SECTION = 0x8000
@@ -100,6 +101,9 @@ typedef enum camera_metadata_section_start {
     ANDROID_DEPTH_START            = ANDROID_DEPTH             << 16,
     ANDROID_LOGICAL_MULTI_CAMERA_START
                                    = ANDROID_LOGICAL_MULTI_CAMERA
+                                                                << 16,
+    ANDROID_DISTORTION_CORRECTION_START
+                                   = ANDROID_DISTORTION_CORRECTION
                                                                 << 16,
     VENDOR_SECTION_START           = VENDOR_SECTION            << 16
 } camera_metadata_section_start_t;
@@ -435,6 +439,11 @@ typedef enum camera_metadata_tag {
     ANDROID_LOGICAL_MULTI_CAMERA_SENSOR_SYNC_TYPE,    // enum         | public       | HIDL v3.3
     ANDROID_LOGICAL_MULTI_CAMERA_END,
 
+    ANDROID_DISTORTION_CORRECTION_MODE =              // enum         | public       | HIDL v3.3
+            ANDROID_DISTORTION_CORRECTION_START,
+    ANDROID_DISTORTION_CORRECTION_AVAILABLE_MODES,    // byte[]       | public       | HIDL v3.3
+    ANDROID_DISTORTION_CORRECTION_END,
+
 } camera_metadata_tag_t;
 
 /**
@@ -769,6 +778,7 @@ typedef enum camera_metadata_enum_android_request_available_capabilities {
                                                                      , // HIDL v3.2
     ANDROID_REQUEST_AVAILABLE_CAPABILITIES_MOTION_TRACKING          , // HIDL v3.3
     ANDROID_REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA     , // HIDL v3.3
+    ANDROID_REQUEST_AVAILABLE_CAPABILITIES_MONOCHROME               , // HIDL v3.3
 } camera_metadata_enum_android_request_available_capabilities_t;
 
 
@@ -983,5 +993,13 @@ typedef enum camera_metadata_enum_android_logical_multi_camera_sensor_sync_type 
     ANDROID_LOGICAL_MULTI_CAMERA_SENSOR_SYNC_TYPE_APPROXIMATE       , // HIDL v3.3
     ANDROID_LOGICAL_MULTI_CAMERA_SENSOR_SYNC_TYPE_CALIBRATED        , // HIDL v3.3
 } camera_metadata_enum_android_logical_multi_camera_sensor_sync_type_t;
+
+
+// ANDROID_DISTORTION_CORRECTION_MODE
+typedef enum camera_metadata_enum_android_distortion_correction_mode {
+    ANDROID_DISTORTION_CORRECTION_MODE_OFF                          , // HIDL v3.3
+    ANDROID_DISTORTION_CORRECTION_MODE_FAST                         , // HIDL v3.3
+    ANDROID_DISTORTION_CORRECTION_MODE_HIGH_QUALITY                 , // HIDL v3.3
+} camera_metadata_enum_android_distortion_correction_mode_t;
 
 

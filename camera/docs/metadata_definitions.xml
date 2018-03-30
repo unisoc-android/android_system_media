@@ -5245,6 +5245,12 @@ xsi:schemaLocation="http://schemas.android.com/service/camera/metadata/ metadata
               of the physical and logical streams are the same.
               </notes>
             </value>
+            <value optional="true" hal_version="3.3" >MONOCHROME
+              <notes>
+              The camera device is a monochrome camera that doesn't contain a color filter array,
+              and the pixel values on U and Y planes are all 128.
+              </notes>
+            </value>
 
           </enum>
           <description>List of capabilities that this camera device
@@ -5315,6 +5321,23 @@ xsi:schemaLocation="http://schemas.android.com/service/camera/metadata/ metadata
           For a camera device with LOGICAL_MULTI_CAMERA capability, it should operate in the
           same way as a physical camera device based on its hardware level and capabilities.
           It's recommended that its feature set is superset of that of individual physical cameras.
+
+          For MONOCHROME, the camera device must also advertise BACKWARD_COMPATIBLE capability, and
+          it is exclusive of both RAW and MANUAL_POST_PROCESSING capabilities:
+
+          * To maintain backward compatibility, the camera device must support all
+          BACKWARD_COMPATIBLE required keys. The android.control.awbAvailableModes key only contains
+          AUTO, and android.control.awbState are either CONVERGED or LOCKED depending on
+          android.control.awbLock.
+
+          * A monochrome device doesn't need to advertise DNG related optional metadata tags.
+
+          * android.colorCorrection.mode, android.colorCorrection.transform, and
+          android.colorCorrection.gains are not applicable. So the camera device cannot
+          be a FULL device. However, the HAL can still advertise other individual capabilites.
+
+          * If the device supports tonemap control, only android.tonemap.curveRed is used.
+          CurveGreen and curveBlue are no-ops.
           </hal_details>
         </entry>
         <entry name="availableRequestKeys" type="int32" visibility="ndk_public"
@@ -8578,6 +8601,9 @@ xsi:schemaLocation="http://schemas.android.com/service/camera/metadata/ metadata
           always provide a curve with number of points equivalent to
           android.tonemap.maxCurvePoints).
 
+          For devices with MONOCHROME capability, only red channel is used. Green and blue channels
+          are ignored.
+
           A few examples, and their corresponding graphical mappings; these
           only specify the red channel and the precision is limited to 4
           digits, for conciseness.
@@ -8647,6 +8673,9 @@ xsi:schemaLocation="http://schemas.android.com/service/camera/metadata/ metadata
           of points can be less than max (that is, the request doesn't have to
           always provide a curve with number of points equivalent to
           android.tonemap.maxCurvePoints).
+
+          For devices with MONOCHROME capability, only red channel is used. Green and blue channels
+          are ignored.
 
           A few examples, and their corresponding graphical mappings; these
           only specify the red channel and the precision is limited to 4
@@ -9661,6 +9690,77 @@ xsi:schemaLocation="http://schemas.android.com/service/camera/metadata/ metadata
           <tag id="LOGICALCAMERA" />
         </entry>
       </static>
+    </section>
+    <section name="distortionCorrection">
+      <controls>
+        <entry name="mode" type="byte" visibility="public" enum="true" hal_version="3.3">
+          <enum>
+            <value>OFF
+            <notes>No distortion correction is applied.</notes></value>
+            <value>FAST <notes>Lens distortion correction is applied without reducing frame rate
+            relative to sensor output. It may be the same as OFF if distortion correction would
+            reduce frame rate relative to sensor.</notes></value>
+            <value>HIGH_QUALITY <notes>High-quality distortion correction is applied, at the cost of
+            possibly reduced frame rate relative to sensor output.</notes></value>
+          </enum>
+          <description>Mode of operation for the lens distortion correction block.</description>
+          <range>android.distortionCorrection.availableModes</range>
+          <details>The lens distortion correction block attempts to improve image quality by fixing
+          radial, tangential, or other geometric aberrations in the camera device's optics.  If
+          available, the android.lens.distortion field documents the lens's distortion parameters.
+
+          OFF means no distortion correction is done.
+
+          FAST/HIGH_QUALITY both mean camera device determined distortion correction will be
+          applied. HIGH_QUALITY mode indicates that the camera device will use the highest-quality
+          correction algorithms, even if it slows down capture rate. FAST means the camera device
+          will not slow down capture rate when applying correction. FAST may be the same as OFF if
+          any correction at all would slow down capture rate.  Every output stream will have a
+          similar amount of enhancement applied.
+
+          The correction only applies to processed outputs such as YUV, JPEG, or DEPTH16; it is not
+          applied to any RAW output.  Metadata coordinates such as face rectangles or metering
+          regions are also not affected by correction.
+
+          Applications enabling distortion correction need to pay extra attention when converting
+          image coordinates between corrected output buffers and the sensor array. For example, if
+          the app supports tap-to-focus and enables correction, it then has to apply the distortion
+          model described in android.lens.distortion to the image buffer tap coordinates to properly
+          calculate the tap position on the sensor active array to be used with
+          android.control.afRegions. The same applies in reverse to detected face rectangles if
+          they need to be drawn on top of the corrected output buffers.
+          </details>
+        </entry>
+      </controls>
+      <static>
+        <entry name="availableModes" type="byte" visibility="public"
+        type_notes="list of enums" container="array" typedef="enumList" hal_version="3.3">
+          <array>
+            <size>n</size>
+          </array>
+          <description>
+          List of distortion correction modes for android.distortionCorrection.mode that are
+          supported by this camera device.
+          </description>
+          <range>Any value listed in android.distortionCorrection.mode</range>
+          <details>
+            No device is required to support this API; such devices will always list only 'OFF'.
+            All devices that support this API will list both FAST and HIGH_QUALITY.
+          </details>
+          <hal_details>
+          HAL must support both FAST and HIGH_QUALITY if distortion correction is available
+          on the camera device, but the underlying implementation can be the same for both modes.
+          That is, if the highest quality implementation on the camera device does not slow down
+          capture rate, then FAST and HIGH_QUALITY will generate the same output.
+          </hal_details>
+          <tag id="V1" />
+          <tag id="REPROC" />
+        </entry>
+      </static>
+      <dynamic>
+        <clone entry="android.distortionCorrection.mode" kind="controls" hal_version="3.3">
+        </clone>
+      </dynamic>
     </section>
   </namespace>
 </metadata>
