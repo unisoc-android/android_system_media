@@ -247,3 +247,30 @@ cc_test {
         },
     }
 }
+
+cc_test {
+    name: "statistics_tests",
+    host_supported: false,
+
+    shared_libs: ["libaudioutils"],
+    srcs: ["statistics_tests.cpp"],
+    cflags: [
+        "-Wall",
+        "-Werror",
+        "-Wextra",
+    ],
+}
+
+cc_test {
+    name: "timestampverifier_tests",
+    host_supported: false,
+
+    shared_libs: ["libaudioutils"],
+    srcs: ["timestampverifier_tests.cpp"],
+    cflags: [
+        "-Wall",
+        "-Werror",
+        "-Wextra",
+    ],
+}
+
