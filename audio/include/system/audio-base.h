@@ -358,6 +358,7 @@ enum {
     AUDIO_DEVICE_IN_PROXY                      = 0x81000000u, // BIT_IN | 0x1000000
     AUDIO_DEVICE_IN_USB_HEADSET                = 0x82000000u, // BIT_IN | 0x2000000
     AUDIO_DEVICE_IN_BLUETOOTH_BLE              = 0x84000000u, // BIT_IN | 0x4000000
+    AUDIO_DEVICE_IN_HDMI_ARC                   = 0x88000000u, // BIT_IN | 0x8000000
     AUDIO_DEVICE_IN_ECHO_REFERENCE             = 0x90000000u, // BIT_IN | 0x10000000
     AUDIO_DEVICE_IN_DEFAULT                    = 0xC0000000u, // BIT_IN | BIT_DEFAULT
 };
@@ -460,6 +461,12 @@ typedef enum {
     AUDIO_LATENCY_NORMAL = 1, // (::android::hardware::audio::common::V4_0::AudioMixLatencyClass.LOW implicitly + 1)
 } audio_mix_latency_class_t;
 
+typedef enum {
+    MIC_DIRECTION_UNSPECIFIED = 0,
+    MIC_DIRECTION_FRONT = 1,
+    MIC_DIRECTION_BACK = 2,
+    MIC_DIRECTION_EXTERNAL = 3,
+} audio_microphone_direction_t;
 #ifdef __cplusplus
 }
 #endif
