@@ -33,8 +33,12 @@ enum {
     AUDIO_STREAM_FOR_POLICY_CNT= AUDIO_STREAM_REROUTING + 1,
 #endif
 
-   /** Total number of stream. */
+#ifdef SPRD_CUSTOM_AUDIO_POLICY
+    AUDIO_STREAM_CNT          = AUDIO_STREAM_FM + 1,
+#else
     AUDIO_STREAM_CNT          = AUDIO_STREAM_PATCH + 1,
+#endif
+
 
     AUDIO_SOURCE_MAX          = AUDIO_SOURCE_VOICE_PERFORMANCE,
     AUDIO_SOURCE_CNT          = AUDIO_SOURCE_MAX + 1,

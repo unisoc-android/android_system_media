@@ -37,6 +37,9 @@ typedef enum {
     /** For audio flinger tracks volume. Only used by the audioflinger */
     AUDIO_STREAM_PATCH = 12,
 #endif // AUDIO_NO_SYSTEM_DECLARATIONS
+#ifdef SPRD_CUSTOM_AUDIO_POLICY
+    AUDIO_STREAM_FM = 13, /* For fm stream */
+#endif
 } audio_stream_type_t;
 
 typedef enum {
